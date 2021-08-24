@@ -2,7 +2,8 @@
 
 ########################################################################################
 # Usage: check_snmp_service.sh host process                                            #
-# This script will checks via SNMP how many processess are active with the given name. #
+# This script will checks via SNMP a Linux hosts where it counts how many processess   #
+# are active with the given name.                                                      #
 # We had to check this for a customer where only SNMP is available.                    #
 ########################################################################################
 
