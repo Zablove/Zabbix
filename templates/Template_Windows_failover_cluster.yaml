@@ -1,0 +1,77 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-10-08T05:46:08Z'
+  template_groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: 75ab69f377a740659b6d8967bba38786
+      template: Template_Windows_Failover_Cluster
+      name: Template_Windows_Failover_Cluster
+      description: |
+        Monitor Failover Cluster, check if nodes on owner node {$OWNERNODE}
+        Create host macro with {$OWNERNODE} and value preferred nodename
+        At zabbix agent configure userparameter which run ps1 script. ps1 script contains:
+        Get-ClusterGroup -Cluster NAMEOFCLUSTER | ConvertTo-Json
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: be0f30475da64c4db1ea266ee7e8db03
+          name: 'Get Cluster status'
+          key: failover.cluster
+          delay: 10m
+          trends: '0'
+          value_type: TEXT
+      discovery_rules:
+        -
+          uuid: e1ee732825da482c982069d0103c6a43
+          name: 'Discover DBs'
+          type: DEPENDENT
+          key: discover.cluster
+          delay: '0'
+          filter:
+            conditions:
+              -
+                macro: '{#DBNAME}'
+                value: (Storage|Group)
+                operator: NOT_MATCHES_REGEX
+                formulaid: A
+          item_prototypes:
+            -
+              uuid: 494180a3be2c4ba6990ba0ffe1322c30
+              name: 'Database {#DBNAME}'
+              type: DEPENDENT
+              key: 'OwnerNode.Cluster[{#DBNAME}]'
+              delay: '0'
+              trends: '0'
+              value_type: TEXT
+              preprocessing:
+                -
+                  type: JSONPATH
+                  parameters:
+                    - '$[?(@.Name == ''{#DBNAME}'')].OwnerNode.Cluster.first()'
+              master_item:
+                key: failover.cluster
+              trigger_prototypes:
+                -
+                  uuid: b68ad79b7c934249b2a34a05d3fc2f85
+                  expression: 'find(/Template_Windows_Failover_Cluster/OwnerNode.Cluster[{#DBNAME}],,,"{$OWNERNODE}")=0'
+                  name: '{#DBNAME} not active at {$OWNERNODE}'
+                  priority: INFO
+          master_item:
+            key: failover.cluster
+          lld_macro_paths:
+            -
+              lld_macro: '{#DBNAME}'
+              path: $.Name
+            -
+              lld_macro: '{#OWNERNODECLUSTER}'
+              path: $.OwnerNode.Cluster
+      macros:
+        -
+          macro: '{$OWNERNODE}'
+          value: 'Undefined SET HOST MACRO'

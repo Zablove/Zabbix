@@ -1,0 +1,62 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-10-09T13:16:05Z'
+  template_groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: 707a3d792bcc4c0ba1a20759d819eb5c
+      template: Template_Airwave_Controller_APstatus
+      name: Template_Airwave_Controller_APstatus
+      description: |
+        Custom template, disover AP's from airwave, create item and check if AP is up.
+        Detects also dependency on master AP. If master IP not available because site is unavailable, only one trigger will fire.
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: 62e05c199f424b9d94afb065bd2a5c1a
+          name: 'Airwave Read API Accesspoints'
+          type: EXTERNAL
+          key: 'discoveraps.sh[{$GROUPNAME}]'
+          delay: 5m
+          trends: '0'
+          value_type: TEXT
+      discovery_rules:
+        -
+          uuid: 5c0c5ad3958b414d8fcca32a2e0c0e91
+          name: 'LLD Accesspoints'
+          type: DEPENDENT
+          key: discover.aps
+          delay: '0'
+          item_prototypes:
+            -
+              uuid: f51655c592704263815a1e724df74650
+              name: '{#APNAME}'
+              type: EXTERNAL
+              key: 'checkap.sh[{#ID}]'
+              delay: 5m
+              trends: '0'
+              value_type: TEXT
+              trigger_prototypes:
+                -
+                  uuid: f19e0a9fc15d4182bc8a7a111a96c607
+                  expression: 'last(/Template_Airwave_Controller_APstatus/checkap.sh[{#ID}])=4 or last(/Template_Airwave_Controller_APstatus/checkap.sh[{#ID}])=1'
+                  name: 'AP {#APNAME} down'
+                  priority: AVERAGE
+          master_item:
+            key: 'discoveraps.sh[{$GROUPNAME}]'
+          lld_macro_paths:
+            -
+              lld_macro: '{#APNAME}'
+              path: $.name
+            -
+              lld_macro: '{#ID}'
+              path: $.id
+      macros:
+        -
+          macro: '{$GROUPNAME}'
+          description: 'AP Groupname in Airwave'
