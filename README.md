@@ -9,3 +9,17 @@ The script forcecheck.sh forces a re-check of all items of the host. This can no
 __check_snmp_service.sh__
 
 This script will checks via SNMP a Linux hosts where it counts how many processess are active with the given name. We had to check this for a customer where only SNMP is available.
+
+__info.sh__
+
+Backend script to display some information about the host. 
+
+__hostgroupcheck.sh__
+
+Script to check how many hosts are in error at a given hostgroup.
+
+__tile.php__
+
+PHP Page that will generate a green (if no triggers active at hostgroups) tile or a red one (if triggers fired at hostgroups). Add transparent png image to display for example a customer logo. 
+You also need the *green.png* and *red.png* in the same folder as a arial.ttf font file (not provided, you can find it at the internet). 
+Also the file *ZabbixApi.php* is needed, note that this php need some dependencies (see file). For source of this file, see https://github.com/intellitrend/zabbixapi-php
