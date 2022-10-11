@@ -23,3 +23,13 @@ Script to check how many hosts are in error at a given hostgroup.
 PHP Page that will generate a green (if no triggers active at hostgroups) tile or a red one (if triggers fired at hostgroups), also counter is added. Add transparent png image to display for example a customer logo. 
 You also need the *green.png* and *red.png* in the same folder as a arial.ttf font file (not provided, you can find it at the internet). 
 Also the file *ZabbixApi.php* is needed, note that this php need some dependencies (see file). For source of this file, see https://github.com/intellitrend/zabbixapi-php
+
+## Zabbix Templates
+
+## Airwave
+
+Zabbix template and scripts to discover status of Accesspoints from Airwave controller, convert it to json and read status per AP. 
+
+## Windows Failover Cluster
+
+Template to monitor Windows Failover Cluster, checks if node is active at the right cluster node. 
