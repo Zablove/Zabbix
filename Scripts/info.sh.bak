@@ -1,0 +1,111 @@
+#!/bin/bash
+
+#########################################################################
+# Created by Zablove 10-10-22                                           #
+# Script to give info about host config, use as an example.             #
+# Frontend script can return extra information about host.				#
+#																		#
+# Note: Script based on Zabbix 5.0 where its not possible to create     #
+# permanent API token for user so you have to login/logout.             #
+# from zabbix 6.0 U can also use permanent API token, this script is    #
+# not prepared for this situation.                                      #
+#########################################################################
+
+
+##Variables
+zabbixusername="ZABBIX_API_USER"
+zabbixpassword="ZABBISPASSWORD"
+hostnm=$1
+
+## Get Zabbix API Token
+zabbixtoken=`curl -s --insecure -X POST -H 'Content-Type:application/json' -d '
+{
+    "jsonrpc": "2.0",
+    "method": "user.login",
+    "params": {
+        "user": "'$zabbixusername'",
+        "password": "'$zabbixpassword'"
+    },
+    "id": 7,
+    "auth": null
+}' https://zabbixurl/zabbix/api_jsonrpc.php \
+| jq -r '.result'`
+
+
+##Get all hostgroups and output to txt file
+output=`curl -s --insecure -X POST -H 'Content-type:application/json' -d '{
+    "jsonrpc": "2.0",
+    "method": "host.get",
+    "params": {
+        "selectGroups": "extend",
+        "selectInterfaces": "extend",
+        "filter": {
+        "host" : [
+         "'$hostnm'"
+        ]
+        }
+        },
+    "auth": "'$zabbixtoken'",
+    "id": 7 }' https://zabbixurl/zabbix/api_jsonrpc.php`
+
+description=$(echo $output | jq -r .result[0].description)
+ipadres=$(echo $output | jq -r .result[0].interfaces[0].ip)
+dnsadres=$(echo $output | jq -r .result[0].interfaces[0].dns)
+useip=$(echo $output | jq -r .result[0].interfaces[0].useip)
+hostgroup=$(echo $output | jq -r .result[0].groups[0].groupid)
+
+
+if [ $useip == "1" ]
+then
+useip="Monitoring op basis van IP"
+else
+useip="Monitoring op basis van DNS"
+fi
+
+## Check for hostgroup convert to custromer name:
+if [ $hostgroup == "5" ]
+then
+hostgroup=$(echo $output | jq -r .result[0].groups[1].groupid)
+fi
+if [ $hostgroup == "10" ]
+then
+customer="Customer A"
+elif [ $hostgroup == "11" ]
+then
+customer="Customer B"
+elif [ $hostgroup == "12" ]
+then
+customer="Customer C"
+else
+customer="Onbekend"
+fi
+
+## Echo output
+echo "Hostname: $hostnm"
+#echo -e "Klant: ${customer}"
+[ -n "${customer}" ] && echo -e "Klant: ${customer}"
+[ -n "${ipadres}" ] && echo -e "IP adres: ${ipadres}"
+[ -n "${dnsadres}" ] && echo -e "DNS adres: ${dnsadres}"
+[ -n "${useip}" ] && echo -e "$useip"
+[ -n "${description}" ] && echo -e "Description:\n${description}"
+
+
+## Close Zabbix Connection
+closeconn=`curl -s --insecure -X POST -H 'Content-type:application/json' -d '{
+        "jsonrpc": "2.0",
+        "method": "user.logout",
+        "params": [],
+        "auth":"'$zabbixtoken'",
+        "id":7
+         }' https://zabbixurl/zabbix/api_jsonrpc.php \
+| jq -r '.result'`
+
+if [ $closeconn != "true" ]
+then
+echo "Connection to Zabbix not proper closed"
+else
+echo -e "\n\n Created by Zablove"
+fi
+
+## Echo complete json output for debugging
+#echo -e "\n\n\n$output"
