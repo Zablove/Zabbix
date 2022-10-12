@@ -1,0 +1,44 @@
+{
+    "jsonrpc": "2.0",
+    "method": "host.create",
+    "params": {
+        "host": "{{hostname}}",
+        "proxy_hostid": "{{proxyid}}",
+        "interfaces": [
+            {
+                "type": {{inttype}},
+                "main": 1,
+                "useip": 1,
+                "ip": "{{ip}}",
+                "dns": "",
+                "port": "161",
+                   "details": {
+                        "version": "2",
+                        "bulk": "1",
+                        "community": "public"
+                    }
+            }
+        ],
+        "groups": [
+            {
+                "groupid": "{{group1}}"
+            },
+                        {
+                "groupid": "{{group2}}"
+            }
+        ],
+         "tags": [
+            {
+                "tag": "{{tgn1}}",
+                "value": "{{tgv1}}"
+            }
+        ],
+        "templates": [
+            {
+                "templateid": "{{templateid}}"
+            }
+        ]
+    },
+    "auth": "{{token}}",
+    "id": {{id}}
+}

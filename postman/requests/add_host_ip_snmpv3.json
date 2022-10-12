@@ -1,0 +1,50 @@
+{
+    "jsonrpc": "2.0",
+    "method": "host.create",
+    "params": {
+        "host": "{{hostname}}",
+        "proxy_hostid": "{{proxyid}}",
+        "interfaces": [
+            {
+                "type": {{inttype}},
+                "main": 1,
+                "useip": 1,
+                "ip": "{{ip}}",
+                "dns": "",
+                "port": "161",
+                   "details": {
+                        "version": "3",
+                        "bulk": "1",
+                        "securityname": "admin",
+                        "securitylevel": "2",
+                        "authpassphrase": "0987654321",
+                        "privpassphrase": "1234567890",
+                        "authprotocol": "1",
+                        "privprotocol": "1",
+                        "contextname": ""
+                    }
+            }
+        ],
+        "groups": [
+            {
+                "groupid": "{{group1}}"
+            },
+                        {
+                "groupid": "{{group2}}"
+            }
+        ],
+         "tags": [
+            {
+                "tag": "{{tgn1}}",
+                "value": "{{tgv1}}"
+            }
+        ],
+        "templates": [
+            {
+                "templateid": "{{templateid}}"
+            }
+        ]
+    },
+    "auth": "{{token}}",
+    "id": {{id}}
+}
