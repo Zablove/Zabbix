@@ -13,7 +13,7 @@ Create 4 variables:
 - id (unique ID, not used by other scripts that use the API)
 - token (leave empty)
 
-![[Pasted image 20221012114205.png]]
+![ScreenShot](Pasted image 20221012114205.png)
 
 ### Get token request
 Go to Collections, create a new collection and a new request. For Zabbix, make sure in your requests to always use: 
