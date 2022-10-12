@@ -13,7 +13,7 @@ Create 4 variables:
 - id (unique ID, not used by other scripts that use the API)
 - token (leave empty)
 
-![ScreenShot](/screenshots/20221012114205.png)
+![ScreenShot](/postman/screenshots/20221012114205.png)
 
 ### Get token request
 Go to Collections, create a new collection and a new request. For Zabbix, make sure in your requests to always use: 
@@ -22,7 +22,7 @@ Go to Collections, create a new collection and a new request. For Zabbix, make s
 - Type: JSON
 
 Also place {{url}} after the POST field. This URL points to the variable _url_ we have set in the environment.
-![ScreenShot](/screenshots/20221012114625.png)
+![ScreenShot](/postman/screenshots/20221012114625.png)
 
 Create the first request named _Zabbix login_
 
@@ -63,7 +63,7 @@ In the body field place:
 ```
 
 This request will use your token to perform a login and returns information about your account:
-![ScreenShot](/screenshots/20221012115733.png)
+![ScreenShot](/postman/screenshots/20221012115733.png)
 
 ### Destroy token
 Your token will not expire by default, however if you create a new token each time you will use Postman, you will get this information in your Zabbix database. For postman usage not a big issue but when you use scripts with logins and every time create a new token (for example multiple times per minute) you will get a lot of garbage in your database. 
@@ -86,9 +86,9 @@ Starting from Zabbix 6.0 you can create a token in the frontend of Zabbix (you c
 
 ### Create API token
 Go to the Zabbix frontend, browse to User settings -> API tokens and Create an API token:
-![ScreenShot](/screenshots/20221012120522.png)
+![ScreenShot](/postman/screenshots/20221012120522.png)
 
-![ScreenShot](/screenshots/20221012120646.png)
+![ScreenShot](/postman/screenshots/20221012120646.png)
 Make sure to copy the token, it's only displayed once. 
 
 ### Environment settings
@@ -98,7 +98,7 @@ Create 4 variables:
 - user (zabbix user)
 - id (unique ID)
 - token (token generated in previous step)
-![ScreenShot](/screenshots/20221012121053.png)
+![ScreenShot](/postman/screenshots/20221012121053.png)
 
 ### Test token request
 Go to Collections, create a new collection and a new request. For Zabbix, make sure in your requests to always use: 
@@ -107,7 +107,7 @@ Go to Collections, create a new collection and a new request. For Zabbix, make s
 - Type: JSON
 
 Also place {{url}} after the POST field. This URL points to the variable _url_ we have set in the environment.
-![ScreenShot](/screenshots/20221012114625.png)
+![ScreenShot](/postman/screenshots/20221012114625.png)
 
 Create the first request named _Zabbix Test Token_
 In the Body field place:
@@ -124,33 +124,33 @@ In the Body field place:
 ```
 
 This request will use your token to perform a login and returns information about your account:
-![ScreenShot](/screenshots/20221012115733.png)
+![ScreenShot](/postman/screenshots/20221012115733.png)
 
 ## Error HELP!
 Common mistakes and how to solve them:
 
 ### Config mistake in request
 After a request you will get _412 Precondition Failed_
-![ScreenShot](/screenshots/20221012123308.png)
+![ScreenShot](/postman/screenshots/20221012123308.png)
 Your request is probably not in JSON but in Text (default) or another format:
 
-![ScreenShot](/screenshots/20221012123432.png)
+![ScreenShot](/postman/screenshots/20221012123432.png)
 
 The Zabbix API is JSON based, always use JSON.
 
 ### Mistake in JSON format
 After a request you get the message _Invalid JSON. An error occurred on the server while parsing the JSON text._
-![ScreenShot](/screenshots/20221012134434.png)
+![ScreenShot](/postman/screenshots/20221012134434.png)
 
 This cause can be different issues, first is the JSON is not right formatted, second, JSON have parameters that Zabbix can't handle. 
 
 The first mistake is easy to find, as Postman checks the JSON syntax for errors. For example, in this way, there is a comma at a place where JSON don't need any. The comma is highlighted as well, is the rule highlighted in your request:
 
-![ScreenShot](/screenshots/20221012135132.png)
+![ScreenShot](/postman/screenshots/20221012135132.png)
 
 The second mistake is a little bit harder to find. In this case, my token is not between quotes. From a JSON perspective, this is not an issue, however Zabbix responds with the same error:
 
-![ScreenShot](/screenshots/20221012135625.png)
+![ScreenShot](/postman/screenshots/20221012135625.png)
 
 So if you get a JSON error, first check the syntax with the help of Postman, second, go and find the error in your request. 
 
@@ -188,15 +188,15 @@ First example is a basic add of a host without any variables (except environment
 
 This will create a host with the name TEST-HOST, Interface is Agent type (1), monitoring based on IP, IP address 127.0.0.1 and agent port 10051. It's added to group 26, not templates or other config applied. 
 When you post this command, you will get a reply that the host is created together with the host ID:
-![ScreenShot](/screenshots/20221012134213.png)
+![ScreenShot](/postman/screenshots/20221012134213.png)
 
 ### How to find ID's?
 If you want to import hosts, you need to apply a hostgroup and for example templates and probably point to a proxy server. There are 2 methods to find them. First find it in the frontend of Zabbix, second, find it with API requests. 
 
 For example a hostgroup, go in Zabbix to Host Groups and hover over the group from which you will need the ID. Hover over the group, and you will see the Group ID:
-![ScreenShot](/screenshots/20221012140331.png)
+![ScreenShot](/postman/screenshots/20221012140331.png)
 Or open the Group and you will see the group ID in the URL:
-![ScreenShot](/screenshots/20221012140421.png)
+![ScreenShot](/postman/screenshots/20221012140421.png)
 
 The second method is to request all groups with an API request.
 
@@ -241,7 +241,7 @@ pm.test("Verify Json values", function () {
 });
 ```
 
-![ScreenShot](/screenshots/20221012143710.png)
+![ScreenShot](/postman/screenshots/20221012143710.png)
 
 This step is optional, however it gives you the ability to see if the host is added even if there was an error in the response from the Zabbix API.
 
@@ -261,18 +261,18 @@ Now in Postman, open a new Runner Tab. Under file -> New Runner Tab (or useCtrl+
 You can now drag your request to the RUN ORDER.
 (if multiple requests apprear in the RUN ORDER field, you can Deselect All and select only the request you need. In this case, we don't need to authenticate anymore. Postman by default works with groups of requests.)
 
-![ScreenShot](/screenshots/20221012143200.png)
+![ScreenShot](/postman/screenshots/20221012143200.png)
 
 In the right pane, select your CSV file. Click Preview to see if the values are as expected:
 
-![ScreenShot](/screenshots/20221012144541.png)
+![ScreenShot](/postman/screenshots/20221012144541.png)
 
 Click on Advanced and select "Save responses" this gives you the ability to debug. 
 Now you can click the Run button and all hosts from the CSV will be imported.
 
 Because we have added a test, Postman returns now 5 successfully POST requests where the hosts were added. Also note that we have saved the responses so can look back what was successful: 
 
-![ScreenShot](/screenshots/20221012153418.png)
+![ScreenShot](/postman/screenshots/20221012153418.png)
 
 ## Hints
 When creating requests, I sometimes ran into the issue that I don't know how to add some parameters, for example when configuring a host interface. A good practice is to add the hosts in the Zabbix web interface and then read the configuration of the host via the API. You then will see how it's configured. 
